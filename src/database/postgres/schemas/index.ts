@@ -1,0 +1,5 @@
+export * from './professor.js'
+export * from './student.js'
+export * from './subject.js'
+export * from './professorSubject.js'
+export * from './studentSubject.js'

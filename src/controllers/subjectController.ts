@@ -1,3 +1,3 @@
 import type { Request, Response } from "express";
-import { Subject } from "../models/Subject.js"
+import { Subject } from "../database/mongodb/models/Subject.js"
 

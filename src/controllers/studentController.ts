@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { Student } from "../models/Student.js"
+import { Student } from "../database/mongodb/models/Student.js"
 
 export const getAllStudents = async (req: Request, res: Response) => {
     try {
