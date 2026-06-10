@@ -1,6 +1,6 @@
 import { pgTable, serial, varchar, integer, time } from "drizzle-orm/pg-core";
 
-export const subject = pgTable("subject", {
+export const subjects = pgTable("subjects", {
     id: serial("id").primaryKey(),
     name: varchar("name", {length: 255}).notNull(),
     workload: integer("workload").notNull(),
