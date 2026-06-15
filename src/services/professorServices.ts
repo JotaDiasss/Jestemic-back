@@ -38,7 +38,7 @@ export async function updateExistingProfessor(id: number, data: { name?: string 
             throw new Error("Nome do Professor é obrigatório")
         }
         if (!/^[a-zA-Z\s]+$/.test(data.name)) {
-            throw new Error('Nome deve conter apenas letras e espaços')
+            throw new Error("Nome deve conter apenas letras e espaços")
         }
     }
     return await updateProfessor(id, data)
