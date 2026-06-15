@@ -13,7 +13,7 @@ export async function getAllProfessors() {
 export async function getProfessorById(id: number) {
     const professor = await findProfessorById(id)
     if (!professor) {
-        throw new Error("Professor nao encontrado")
+        throw new Error("Professor não encontrado")
     }
     return professor
 }

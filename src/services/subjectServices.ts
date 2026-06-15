@@ -1,3 +1,4 @@
+import { subjects } from '../database/postgres/index.js'
 import {
     findAllSubjects,
     findSubjectById,
@@ -56,6 +57,8 @@ export async function createNewSubject(data: {
         throw new Error("Horário de término deve ser maior que o horário de início")
     }
 
+    const subject = await createSubject(data)
+    return subject
 }
 
 export async function updateExistingSubject(id: number, data: {
@@ -65,6 +68,11 @@ export async function updateExistingSubject(id: number, data: {
     finishAt?: string
 }) {
     const subject = await findSubjectById(id)
+
+    if(!subject) {
+        throw new Error("Cadeira não encontrada")
+    }
+    
     if (data.name !== undefined) {
         if (!data.name || data.name.trim() === "") {
             throw new Error("Nome da cadeira é obrigatorio")
@@ -78,21 +86,16 @@ export async function updateExistingSubject(id: number, data: {
             throw new Error("Carga horária deve ser maior que zero")
         }
     }
-    if (data.startAt !== undefined) {
-        if (!data.startAt) {
-            throw new Error("Horário de início é obrigatório")
-        }
+    
+    const finalStartAt = data.startAt !== undefined ? data.startAt : subject.startAt
+    const finalFinishAt = data.finishAt !== undefined ? data.finishAt : subject.finishAt
+
+    if (finalFinishAt <= finalStartAt) {
+        throw new Error("Horário de término deve ser maior que o horário de início")
     }
-    if (data.finishAt !== undefined) {
-        if (!data.finishAt) {
-            throw new Error("Horário de término é obrigatório")
-        }
-    }
-    if (data.finishAt !== undefined && data.startAt !== undefined) {
-        if (data.finishAt <= data.startAt) {
-            throw new Error("Horário de término deve ser maior que o horário de início")
-        }
-    }
+    
+    await updateSubject(id, data)
+    return subject
 }
 
 export async function deleteExistingSubject(id: number) {
@@ -100,5 +103,5 @@ export async function deleteExistingSubject(id: number) {
     if (!subject) {
         throw new Error("Cadeira não encontrada")
     }
-    await deleteSubject
+    await deleteSubject(id)
 }
