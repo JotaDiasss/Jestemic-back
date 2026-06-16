@@ -1,9 +1,10 @@
 import type { Request, Response } from "express";
-import { Student } from "../database/mongodb/models/Student.js"
+import * as studentService from "../services/studentServices.js"
+import * as studentSubjectServices from "../services/studentSubjectService.js"
 
 export const getAllStudents = async (req: Request, res: Response) => {
     try {
-        const student = await Student.find()
+        const student = await studentService.getAllStudents()
         res.status(200).json(student)
     } catch (err) {
         res.status(500).json({
@@ -15,16 +16,17 @@ export const getAllStudents = async (req: Request, res: Response) => {
 export const getStudent = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
-        const student = await Student.findById(id)
+        const studentId = Number(id)
 
-        if (!student) {
-            return res.status(404).json({
-                err: "Estudante não encontrado"
-            })
-        }
+        const student = await studentService.getStudentById(studentId)
 
         res.status(200).json(student)
     } catch (err) {
+        if (err instanceof Error) {
+            if (err.message === "Estudante não encontrado") {
+                return res.status(404).json({ err: err.message })
+            }
+        }
         res.status(500).json({
             err: "Erro ao buscar o estudante"
         })
@@ -35,14 +37,32 @@ export const createStudent = async (req: Request, res: Response) => {
     try {
         const { name, period, subjects } = req.body
 
-        const student = await Student.create({
-            name,
-            period,
-            subjects: subjects || []
-        })
+        const student = await studentService.createNewStudent({ name, period })
+        if (!student) {
+            throw new Error("Erro ao criar professor")
+        }
+        if (subjects && Array.isArray(subjects)) {
+            for (const subjectId of subjects) {
+                await studentSubjectServices.addSubjectToStudentService(student.id, subjectId)
+            }
+        }
 
         res.status(201).json(student)
     } catch (err) {
+        if (err instanceof Error) {
+            if (err.message === "Nome do estudante é obrigatório" ||
+                err.message === "Nome deve conter apenas letras e espaços"
+            ) {
+                return res.status(400).json({
+                    err: err.message
+                })
+            }
+            if (err.message === "Estudante não encontrado" ||
+                err.message === "Disciplina não encontrado"
+            ) {
+                return res.status(404).json({ err: err.message })
+            }
+        }
         res.status(500).json({
             err: "Erro ao criar estudante"
         })
@@ -53,30 +73,32 @@ export const updateStudent = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
         const { name, period, subjects } = req.body
+        const studentId = Number(id)
 
-        const updateData: any = {}
-        if(name !== undefined) updateData.name = name
-        if(period !== undefined) updateData.period = period
-        if(subjects !== undefined) updateData.subjects = subjects
-
-        if (Object.keys(updateData).length === 0) {
-            return res.status(400).json({
-                err: "Envie pelo menos um campo para atualizar"
-            })
-        }
-
-        const student = await Student.findByIdAndUpdate(
-            id, updateData, { new: true }
+        const student = await studentService.updateExistingStudent(
+            studentId, { name, period }
         )
 
-        if (!student) {
-            return res.status(404).json({
-                err: "Estudante não encontrado"
-            })
+        if (subjects && Array.isArray(subjects)) {
+            for (const subjectId of subjects) {
+                await studentSubjectServices.addSubjectToStudentService(studentId, subjectId)
+            }
         }
 
         res.status(200).json(student)
     } catch (err) {
+        if (err instanceof Error) {
+            if (err.message === "Nome do estudante é obrigatório" ||
+                err.message === "Nome deve conter apenas letras e espaços"
+            ) {
+
+            }
+            if (err.message === "Estudante não encontrado" ||
+                err.message === "Disciplina não encontrado"
+            ) {
+                return res.status(404).json({ err: err.message })
+            }
+        }
         res.status(500).json({
             err: "Erro ao editar o estudante"
         })
@@ -84,18 +106,19 @@ export const updateStudent = async (req: Request, res: Response) => {
 }
 
 export const deleteStudent = async (req: Request, res: Response) => {
-    try{
+    try {
         const { id } = req.params
-        const student = await Student.findByIdAndDelete(id)
+        const studentId = Number(id)
 
-        if (!student) {
-            return res.status(404).json({
-                err: "Estudante não encontrado"
-            })
-        }
+        await studentService.deleteExistingStudent(studentId)
 
         res.status(204).send()
     } catch (err) {
+        if (err instanceof Error) {
+            if (err.message === "Estudante não encontrado") {
+                return res.status(404).json({ err: err.message })
+            }
+        }
         res.status(500).json({
             err: "Erro ao deletar o estudante"
         })

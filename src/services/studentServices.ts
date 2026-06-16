@@ -20,10 +20,10 @@ export async function getStudentById(id: number) {
 
 export async function createNewStudent(data: { name: string, period: number }) {
     if (!data.name || data.name.trim() === "") {
-        throw new Error("Nome do Estudante é obrigatório")
+        throw new Error("Nome do estudante é obrigatório")
     }
     if (!/^[a-zA-Z\s]+$/.test(data.name)) {
-        throw new Error('Nome deve conter apenas letras e espaços')
+        throw new Error("Nome deve conter apenas letras e espaços")
     }
     return await createStudent(data)
 }

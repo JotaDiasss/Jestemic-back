@@ -20,7 +20,7 @@ export async function getProfessorById(id: number) {
 
 export async function createNewProfessor(data: { name: string }) {
     if (!data.name || data.name.trim() === "") {
-        throw new Error("Nome do Professor é obrigatório")
+        throw new Error("Nome do professor é obrigatório")
     }
     if (!/^[a-zA-Z\s]+$/.test(data.name)) {
         throw new Error('Nome deve conter apenas letras e espaços')
@@ -35,7 +35,7 @@ export async function updateExistingProfessor(id: number, data: { name?: string 
     }
     if (data.name !== undefined ) {
         if (!data.name || data.name.trim() === "" ) {
-            throw new Error("Nome do Professor é obrigatório")
+            throw new Error("Nome do professor é obrigatório")
         }
         if (!/^[a-zA-Z\s]+$/.test(data.name)) {
             throw new Error("Nome deve conter apenas letras e espaços")

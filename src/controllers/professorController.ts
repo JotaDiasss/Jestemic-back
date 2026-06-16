@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import * as professorService from "../services/professorServices.js"
 import * as professorSubjectService from "../services/professorSubjectService.js"
-import { error } from "node:console";
 
 export const getAllProfessors = async (req: Request, res: Response) => {
     try {
@@ -21,14 +20,13 @@ export const getProfessor = async (req: Request, res: Response) => {
 
         const professor = await professorService.getProfessorById(professorId)
 
-        if (!professor) {
-            return res.status(404).json({
-                err: "Professor não encontrado"
-            })
-        }
-
         res.status(200).json(professor)
     } catch (err) {
+        if (err instanceof Error) {
+            if (err.message === "Professor não encontrado") {
+                return res.status(404).json({ err: err.message })
+            }
+        }
         res.status(500).json({
             err: "Erro ao buscar o professor"
         })
@@ -90,7 +88,7 @@ export const updateProfessor = async (req: Request, res: Response) => {
         res.status(200).json(professor)
     } catch (err) {
         if (err instanceof Error) {
-            if (err.message === "Nome do Professor é obrigatório" ||
+            if (err.message === "Nome do professor é obrigatório" ||
                 err.message === "Nome deve conter apenas letras e espaços"
             ) {
 
