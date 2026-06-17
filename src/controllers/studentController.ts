@@ -51,7 +51,8 @@ export const createStudent = async (req: Request, res: Response) => {
     } catch (err) {
         if (err instanceof Error) {
             if (err.message === "Nome do estudante é obrigatório" ||
-                err.message === "Nome deve conter apenas letras e espaços"
+                err.message === "Nome deve conter apenas letras e espaços" ||
+                err.message === "Periodo do estudante é obrigatório"
             ) {
                 return res.status(400).json({
                     err: err.message
@@ -89,9 +90,10 @@ export const updateStudent = async (req: Request, res: Response) => {
     } catch (err) {
         if (err instanceof Error) {
             if (err.message === "Nome do estudante é obrigatório" ||
-                err.message === "Nome deve conter apenas letras e espaços"
+                err.message === "Nome deve conter apenas letras e espaços" ||
+                err.message === "Periodo do estudante é obrigatório"
             ) {
-
+                return res.status(400).json({ err: err.message })
             }
             if (err.message === "Estudante não encontrado" ||
                 err.message === "Disciplina não encontrado"

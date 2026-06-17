@@ -25,10 +25,13 @@ export async function createNewStudent(data: { name: string, period: number }) {
     if (!/^[a-zA-Z\s]+$/.test(data.name)) {
         throw new Error("Nome deve conter apenas letras e espaços")
     }
+    if (!data.period) {
+        throw new Error("Periodo do estudante é obrigatório")
+    }
     return await createStudent(data)
 }
 
-export async function updateExistingStudent(id: number, data: { name?: string, period: number }) {
+export async function updateExistingStudent(id: number, data: { name?: string, period?: number }) {
     const student = await findStudentById(id)
     if (!student) {
         throw new Error("Estudante não encontrado")
@@ -39,6 +42,11 @@ export async function updateExistingStudent(id: number, data: { name?: string, p
         }
         if (!/^[a-zA-Z\s]+$/.test(data.name)) {
             throw new Error('Nome deve conter apenas letras e espaços')
+        }
+    }
+    if (data.period !== undefined) {
+        if (!data.period) {
+            throw new Error("Periodo do estudante é obrigatório")
         }
     }
     return await updateStudent(id, data)

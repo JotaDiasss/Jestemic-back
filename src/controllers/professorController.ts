@@ -76,7 +76,7 @@ export const updateProfessor = async (req: Request, res: Response) => {
         const professorId = Number(id)
 
         const professor = await professorService.updateExistingProfessor(
-            professorId, name
+            professorId, { name }
         )
 
         if (subjects && Array.isArray(subjects)) {

@@ -62,7 +62,7 @@ export const createNewSubject = async (req: Request, res: Response) => {
             ) {
                 return res.status(400).json({ err: err.message })
             }
-            if (err.message === "Disciplina não encontrado") {
+            if (err.message === "Disciplina não encontrada") {
                 return res.status(404).json({ err: err.message })
             }
         }
@@ -102,7 +102,7 @@ export const updateSubject = async (req: Request, res: Response) => {
             ) {
                 return res.status(400).json({ err: err.message })
             }
-            if (err.message === "Disciplina não encontrado") {
+            if (err.message === "Disciplina não encontrada") {
                 return res.status(404).json({ err: err.message })
             }
         }
