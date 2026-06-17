@@ -91,7 +91,7 @@ export const updateProfessor = async (req: Request, res: Response) => {
             if (err.message === "Nome do professor é obrigatório" ||
                 err.message === "Nome deve conter apenas letras e espaços"
             ) {
-
+                return res.status(400).json({ err: err.message })
             }
             if (err.message === "Professor não encontrado" ||
                 err.message === "Disciplina não encontrado"

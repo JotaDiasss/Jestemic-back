@@ -1,4 +1,3 @@
-import { subjects } from '../database/postgres/index.js'
 import {
     findAllSubjects,
     findSubjectById,
@@ -14,7 +13,7 @@ export async function getAllSubjects() {
 export async function getSubjectById(id: number) {
     const subject = await findSubjectById(id)
     if (!subject) {
-        throw new Error("Cadeira não encontrada")
+        throw new Error("Disciplina não encontrada")
     }
     return subject
 }
@@ -70,12 +69,12 @@ export async function updateExistingSubject(id: number, data: {
     const subject = await findSubjectById(id)
 
     if(!subject) {
-        throw new Error("Cadeira não encontrada")
+        throw new Error("Disciplina não encontrada")
     }
     
     if (data.name !== undefined) {
         if (!data.name || data.name.trim() === "") {
-            throw new Error("Nome da cadeira é obrigatorio")
+            throw new Error("Nome da disciplina é obrigatorio")
         }
         if (!/^[a-zA-Z0-9\s]+$/.test(data.name)) {
             throw new Error("Nome deve conter apenas letras, números e espaços")
@@ -101,7 +100,7 @@ export async function updateExistingSubject(id: number, data: {
 export async function deleteExistingSubject(id: number) {
     const subject = await findSubjectById(id)
     if (!subject) {
-        throw new Error("Cadeira não encontrada")
+        throw new Error("Disciplina não encontrada")
     }
     await deleteSubject(id)
 }
