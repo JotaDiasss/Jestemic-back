@@ -39,7 +39,7 @@ export const createStudent = async (req: Request, res: Response) => {
 
         const student = await studentService.createNewStudent({ name, period })
         if (!student) {
-            throw new Error("Erro ao criar professor")
+            throw new Error("Erro ao criar o estudante")
         }
         if (subjects && Array.isArray(subjects)) {
             for (const subjectId of subjects) {
@@ -65,7 +65,7 @@ export const createStudent = async (req: Request, res: Response) => {
             }
         }
         res.status(500).json({
-            err: "Erro ao criar estudante"
+            err: "Erro ao criar o estudante"
         })
     }
 }

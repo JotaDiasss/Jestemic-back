@@ -5,6 +5,7 @@ import {
     updateSubject,
     deleteSubject
 } from '../repositories/subjectRepository.js'
+import { Log } from "../database/mongodb/models/Log.js"
 
 export async function getAllSubjects() {
     return await findAllSubjects()
@@ -56,8 +57,19 @@ export async function createNewSubject(data: {
         throw new Error("Horário de término deve ser maior que o horário de início")
     }
 
-    const subject = await createSubject(data)
-    return subject
+    const createdSubject = await createSubject(data)
+    if (createdSubject === undefined) {
+        throw new Error("Erro ao criar a disciplina")
+    }
+
+    await Log.create({
+        level: "info",
+        message: `Disciplina ${createdSubject.name} criada com sucesso`,
+        service: "subject-service",
+        metadata: { subjectId: createdSubject.id }
+    })
+
+    return createdSubject
 }
 
 export async function updateExistingSubject(id: number, data: {
@@ -93,8 +105,19 @@ export async function updateExistingSubject(id: number, data: {
         throw new Error("Horário de término deve ser maior que o horário de início")
     }
     
-    await updateSubject(id, data)
-    return subject
+    const updatedSubject = await updateSubject(id, data)
+    if (updatedSubject === undefined) {
+        throw new Error("Erro ao editar a disciplina")
+    }
+
+    await Log.create({
+        level: "info",
+        message: `Disciplina ${updatedSubject.name} editada com sucesso`,
+        service: "subject-service",
+        metadata: { subjectId: updatedSubject.id }
+    })
+
+    return updatedSubject
 }
 
 export async function deleteExistingSubject(id: number) {
@@ -102,5 +125,13 @@ export async function deleteExistingSubject(id: number) {
     if (!subject) {
         throw new Error("Disciplina não encontrada")
     }
+
+    await Log.create({
+        level: "info",
+        message: `Disciplina ${subject.name} deletada com sucesso`,
+        service: "subject-service",
+        metadata: { subjectId: subject.id }
+    })
+
     await deleteSubject(id)
 }

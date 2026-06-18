@@ -64,7 +64,7 @@ export const createProfessor = async (req: Request, res: Response) => {
             }
         }
         res.status(500).json({
-            err: "Erro ao criar professor"
+            err: "Erro ao criar o professor"
         })
     }
 }

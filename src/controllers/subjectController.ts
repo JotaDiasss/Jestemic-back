@@ -27,7 +27,7 @@ export const getSubject = async (req: Request, res: Response) => {
             }
         }
         res.status(500).json({
-            err: "Erro ao bsucar a Disciplina"
+            err: "Erro ao buscar a Disciplina"
         })
     }
 }

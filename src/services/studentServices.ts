@@ -5,6 +5,7 @@ import {
     updateStudent,
     deleteStudent
 } from '../repositories/studentRepository.js'
+import { Log } from "../database/mongodb/models/Log.js"
 
 export async function getAllStudents() {
     return await findAllStudents()
@@ -28,7 +29,19 @@ export async function createNewStudent(data: { name: string, period: number }) {
     if (!data.period) {
         throw new Error("Periodo do estudante é obrigatório")
     }
-    return await createStudent(data)
+    const createdStudent = await createStudent(data)
+    if (createdStudent === undefined) {
+        throw new Error("Erro ao criar o estudante")
+    }
+
+    await Log.create({
+        level: "info",
+        message: `Estudante ${createdStudent.name} criado com sucesso`,
+        service: "student-service",
+        metadata: { studentId: createdStudent.id }
+    })
+
+    return createdStudent
 }
 
 export async function updateExistingStudent(id: number, data: { name?: string, period?: number }) {
@@ -49,7 +62,20 @@ export async function updateExistingStudent(id: number, data: { name?: string, p
             throw new Error("Periodo do estudante é obrigatório")
         }
     }
-    return await updateStudent(id, data)
+    const updatedStudent = await updateStudent(id, data)
+    if (updatedStudent === undefined) {
+        throw new Error("Erro ao editar o estudante")
+    }
+
+
+    await Log.create({
+        level: "info",
+        message: `Estudante ${updatedStudent.name} editado com sucesso`,
+        service: "student-service",
+        metadata: { studentId: updatedStudent.id }
+    })
+
+    return updatedStudent
 }
 
 export async function deleteExistingStudent(id: number) {
@@ -57,5 +83,13 @@ export async function deleteExistingStudent(id: number) {
     if (!student) {
         throw new Error("Estudante não encontrado")
     }
+
+    await Log.create({
+        level: "info",
+        message: `Estudante ${student.name} deletado com sucesso`,
+        service: "student-service",
+        metadata: { studentId: student.id }
+    })
+
     await deleteStudent(id)
 }
