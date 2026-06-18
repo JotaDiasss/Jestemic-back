@@ -6,6 +6,7 @@ import {
     deleteProfessor
 } from "../repositories/professorRepository.js"
 import { Log } from "../database/mongodb/models/Log.js"
+import { findSubjectsByProfessor } from "../repositories/professorSubjectRepository.js"
 
 export async function getAllProfessors() {
     return await findAllProfessors()
@@ -16,7 +17,10 @@ export async function getProfessorById(id: number) {
     if (!professor) {
         throw new Error("Professor não encontrado")
     }
-    return professor
+
+    const subjects = await findSubjectsByProfessor(id)
+
+    return { ...professor, subjects }
 }
 
 export async function createNewProfessor(data: { name: string }) {

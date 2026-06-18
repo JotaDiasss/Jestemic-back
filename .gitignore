@@ -5,3 +5,10 @@ drizzle/migrations/
 #   build
 dist/
 build/
+
+# Postman
+.postman/
+postman/
+collections/
+*.postman_collection.json
+*.postman_environment.json

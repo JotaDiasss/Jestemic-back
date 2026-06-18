@@ -32,6 +32,9 @@ export async function findSubjectsByStudent (studentId: number) {
         .from(studentSubjects)
         .innerJoin(subjects, eq(studentSubjects.subjectId, subjects.id))
         .where(eq(studentSubjects.studentId, studentId))
+
+    console.log('Resultado do banco:', result)
+
     return result
 }
 

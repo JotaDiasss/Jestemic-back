@@ -6,6 +6,7 @@ import {
     deleteStudent
 } from '../repositories/studentRepository.js'
 import { Log } from "../database/mongodb/models/Log.js"
+import { findSubjectsByStudent } from "../repositories/studentSubjectRepository.js"
 
 export async function getAllStudents() {
     return await findAllStudents()
@@ -16,7 +17,10 @@ export async function getStudentById(id: number) {
     if (!student) {
         throw new Error("Estudante nao encontrado")
     }
-    return student
+
+    const subjects = await findSubjectsByStudent(id)
+
+    return { ...student, subjects }
 }
 
 export async function createNewStudent(data: { name: string, period: number }) {
