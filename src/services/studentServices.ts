@@ -88,12 +88,12 @@ export async function deleteExistingStudent(id: number) {
         throw new Error("Estudante não encontrado")
     }
 
+    await deleteStudent(id)
+
     await Log.create({
         level: "info",
         message: `Estudante ${student.name} deletado com sucesso`,
         service: "student-service",
         metadata: { studentId: student.id }
     })
-
-    await deleteStudent(id)
 }
