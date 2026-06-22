@@ -125,6 +125,8 @@ export async function deleteExistingSubject(id: number) {
     if (!subject) {
         throw new Error("Disciplina não encontrada")
     }
+    
+    await deleteSubject(id)
 
     await Log.create({
         level: "info",
@@ -133,5 +135,5 @@ export async function deleteExistingSubject(id: number) {
         metadata: { subjectId: subject.id }
     })
 
-    await deleteSubject(id)
+    
 }

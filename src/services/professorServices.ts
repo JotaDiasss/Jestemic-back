@@ -78,6 +78,8 @@ export async function deleteExistingProfessor(id: number) {
     if (!professor) {
         throw new Error("Professor não encontrado")
     }
+    
+    await deleteProfessor(id)
 
     await Log.create({
         level: "info",
@@ -86,5 +88,5 @@ export async function deleteExistingProfessor(id: number) {
         metadata: { professorId: professor.id }
     })
 
-    await deleteProfessor(id)
+    
 }

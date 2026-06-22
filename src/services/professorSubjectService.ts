@@ -45,6 +45,8 @@ export async function removeSubjectFromProfessorService(professorId: number, sub
     if (!subject){
         throw new Error("Disciplina não encontrado")
     }
+    
+    await removeSubjectFromProfessor(professorId, subjectId)
 
     await Log.create({
         level: "info",
@@ -56,7 +58,7 @@ export async function removeSubjectFromProfessorService(professorId: number, sub
         }
     })
 
-    await removeSubjectFromProfessor(professorId, subjectId)
+    
 }
 
 export async function getSubjectsByProfessorService(professorId: number) {
