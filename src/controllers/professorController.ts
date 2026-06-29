@@ -75,14 +75,18 @@ export const updateProfessor = async (req: Request, res: Response) => {
         const { name, subjects } = req.body
         const professorId = Number(id)
 
-        const professor = await professorService.updateExistingProfessor(
-            professorId, { name }
-        )
+        let professor = await professorService.getProfessorById(professorId)
+
+        if (name !== undefined) {
+            await professorService.updateExistingProfessor(professorId, { name })
+            professor = await professorService.getProfessorById(professorId)
+        }
 
         if (subjects && Array.isArray(subjects)) {
             for (const subjectId of subjects) {
                 await professorSubjectService.addSubjectToProfessorService(professorId, subjectId)
             }
+            professor = await professorService.getProfessorById(professorId)
         }
 
         res.status(200).json(professor)
@@ -94,7 +98,7 @@ export const updateProfessor = async (req: Request, res: Response) => {
                 return res.status(400).json({ err: err.message })
             }
             if (err.message === "Professor não encontrado" ||
-                err.message === "Disciplina não encontrado"
+                err.message === "Disciplina não encontrada"
             ) {
                 return res.status(404).json({ err: err.message })
             }

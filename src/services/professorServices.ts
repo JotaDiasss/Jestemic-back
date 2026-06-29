@@ -7,6 +7,7 @@ import {
 } from "../repositories/professorRepository.js"
 import { Log } from "../database/mongodb/models/Log.js"
 import { findSubjectsByProfessor } from "../repositories/professorSubjectRepository.js"
+import { findSubjectNamesByProfessor } from '../repositories/professorSubjectRepository.js'
 
 export async function getAllProfessors() {
     return await findAllProfessors()
@@ -17,10 +18,10 @@ export async function getProfessorById(id: number) {
     if (!professor) {
         throw new Error("Professor não encontrado")
     }
-
-    const subjects = await findSubjectsByProfessor(id)
-
-    return { ...professor, subjects }
+    
+    const subjectNames = await findSubjectNamesByProfessor(id)
+    
+    return { ...professor, subjects: subjectNames }
 }
 
 export async function createNewProfessor(data: { name: string }) {
@@ -57,6 +58,9 @@ export async function updateExistingProfessor(id: number, data: { name?: string 
         if (!/^[a-zA-Z\s]+$/.test(data.name)) {
             throw new Error("Nome deve conter apenas letras e espaços")
         }
+    }
+    if (Object.keys(data).length === 0) {
+        throw new Error("Nenhum campo para atualizar")
     }
     const updatedProfessor = await updateProfessor(id, data)
     if (updatedProfessor === undefined){

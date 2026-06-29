@@ -76,18 +76,25 @@ export const updateStudent = async (req: Request, res: Response) => {
         const { name, period, subjects } = req.body
         const studentId = Number(id)
 
-        const student = await studentService.updateExistingStudent(
-            studentId, { name, period }
-        )
+        console.log('Dados recebidos:', { name, period, subjects })
+
+        let student = await studentService.getStudentById(studentId)
+
+        if (name !== undefined || period !== undefined) {
+            await studentService.updateExistingStudent(studentId, { name, period })
+            student = await studentService.getStudentById(studentId)
+        }
 
         if (subjects && Array.isArray(subjects)) {
             for (const subjectId of subjects) {
                 await studentSubjectServices.addSubjectToStudentService(studentId, subjectId)
             }
+            student = await studentService.getStudentById(studentId)
         }
 
         res.status(200).json(student)
     } catch (err) {
+        console.log('MENSAGEM DO ERRO:', err instanceof Error ? err.message : err)
         if (err instanceof Error) {
             if (err.message === "Nome do estudante é obrigatório" ||
                 err.message === "Nome deve conter apenas letras e espaços" ||
@@ -96,7 +103,7 @@ export const updateStudent = async (req: Request, res: Response) => {
                 return res.status(400).json({ err: err.message })
             }
             if (err.message === "Estudante não encontrado" ||
-                err.message === "Disciplina não encontrado"
+                err.message === "Disciplina não encontrada"
             ) {
                 return res.status(404).json({ err: err.message })
             }

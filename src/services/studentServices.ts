@@ -6,7 +6,7 @@ import {
     deleteStudent
 } from '../repositories/studentRepository.js'
 import { Log } from "../database/mongodb/models/Log.js"
-import { findSubjectsByStudent } from "../repositories/studentSubjectRepository.js"
+import { findSubjectNamesByStudent } from '../repositories/studentSubjectRepository.js'
 
 export async function getAllStudents() {
     return await findAllStudents()
@@ -15,12 +15,12 @@ export async function getAllStudents() {
 export async function getStudentById(id: number) {
     const student = await findStudentById(id)
     if (!student) {
-        throw new Error("Estudante nao encontrado")
+        throw new Error("Estudante não encontrado")
     }
-
-    const subjects = await findSubjectsByStudent(id)
-
-    return { ...student, subjects }
+    
+    const subjectNames = await findSubjectNamesByStudent(id)
+    
+    return { ...student, subjects: subjectNames }
 }
 
 export async function createNewStudent(data: { name: string, period: number }) {
@@ -65,6 +65,9 @@ export async function updateExistingStudent(id: number, data: { name?: string, p
         if (!data.period) {
             throw new Error("Periodo do estudante é obrigatório")
         }
+    }
+    if (Object.keys(data).length === 0) {
+        throw new Error("Nenhum campo para atualizar")
     }
     const updatedStudent = await updateStudent(id, data)
     if (updatedStudent === undefined) {

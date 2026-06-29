@@ -49,3 +49,15 @@ export async function findStudentsBySubject (subjectId: number) {
         .where(eq(studentSubjects.subjectId, subjectId))
         return result
 }
+
+export async function findSubjectNamesByStudent(studentId: number) {
+    const result = await postgresDB
+        .select({
+            name: subjects.name
+        })
+        .from(studentSubjects)
+        .innerJoin(subjects, eq(studentSubjects.subjectId, subjects.id))
+        .where(eq(studentSubjects.studentId, studentId))
+    
+    return result.map(r => r.name)
+}
